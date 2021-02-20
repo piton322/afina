@@ -13,32 +13,32 @@ void SimpleLRU::ToHead(lru_node * node)
     {
         return; // голова
     }
-    auto save = move(node->prev->next); // 
-    if (node->next == nullptr)
+    auto save = move(node->prev->next); // запоминаем
+    if (node->next == nullptr) // если в конце
     {
-    	_lru_last = save->prev;
+    	_lru_last = save->prev; // последний теперь предпоследний
     }
     else
     {
-    	save->next->prev = save->prev;
+    	save->next->prev = save->prev; // если в середине, то двигаем на 1 назад
     }
-    save->prev->next = move(save->next);
-    save->next = move(_lru_head);
+    save->prev->next = move(save->next); // передвигаем следующий на 1 назад
+    save->next = move(_lru_head); // тащим голову
     save->next->prev = save.get();
     save->prev = nullptr;
-    _lru_head = move(save);
+    _lru_head = move(save); // настраиваем остатки
 }
 
 void SimpleLRU::DeleteLast()
 {
     lru_node * last = _lru_last;
-    _current_size -= last->key.size();
+    _current_size -= last->key.size(); // удаляем последний элемент
     _current_size -= last->value.size();
     _lru_index.erase(last->key);
     if (last->prev == nullptr)
     {
         // если последний элемент это голова
-        _lru_head.reset();
+        _lru_head.reset(); // Destroys the object currently managed by the unique_ptr (if any) and takes ownership of p.
     }
     else
     {
