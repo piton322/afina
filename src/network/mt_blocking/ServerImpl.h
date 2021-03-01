@@ -1,5 +1,4 @@
-#ifndef AFINA_NETWORK_MT_BLOCKING_SERVER_H
-#define AFINA_NETWORK_MT_BLOCKING_SERVER_H
+#pragma once
 
 #include <atomic>
 #include <thread>
@@ -41,7 +40,7 @@ protected:
      */
     void OnRun();
 
-    void ClientProcess(int client_socket)
+    void ClientProcess(int client_socket);
 
 private:
     // Logger instance
@@ -77,5 +76,3 @@ private:
 } // namespace MTblocking
 } // namespace Network
 } // namespace Afina
-
-#endif // AFINA_NETWORK_MT_BLOCKING_SERVER_H
