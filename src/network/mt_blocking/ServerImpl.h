@@ -3,6 +3,9 @@
 
 #include <atomic>
 #include <thread>
+#include <mutex>
+#include <vector>
+#include <condition_variable>
 
 #include <afina/network/Server.h>
 
@@ -38,6 +41,8 @@ protected:
      */
     void OnRun();
 
+    void ClientProcess(int client_socket)
+
 private:
     // Logger instance
     std::shared_ptr<spdlog::logger> _logger;
@@ -52,6 +57,21 @@ private:
 
     // Thread to run network on
     std::thread _thread;
+
+    // limit of workers
+    int limit_workers;
+
+    // current number of workers
+    std::atomic<int> workers_count;
+
+    // to open and close socket
+    std::mutex socket_mutex;
+
+    // for opened clients sockets connections
+    std::vector<int> sockets;
+    
+    // synchronization primitive to controll threads blocking
+    std::condition_variable s_stop;
 };
 
 } // namespace MTblocking
