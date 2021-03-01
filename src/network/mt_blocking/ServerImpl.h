@@ -3,7 +3,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
-#include <vector>
+#include <set>
 #include <condition_variable>
 
 #include <afina/network/Server.h>
@@ -67,7 +67,7 @@ private:
     std::mutex socket_mutex;
 
     // for opened clients sockets connections
-    std::vector<int> sockets;
+    std::set<int> sockets;
     
     // synchronization primitive to controll threads blocking
     std::condition_variable s_stop;
