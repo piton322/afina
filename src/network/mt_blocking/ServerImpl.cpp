@@ -277,7 +277,7 @@ void ServerImpl::OnRun()
             std::unique_lock<std::mutex> lock(socket_mutex);
             if ((workers_count < limit_workers) && running)
             {
-                sockets.push_back(client_socket);
+                sockets.insert(client_socket);
                 workers_count++;
                 //_logger->debug("Starting client tread {} ", client_socket);
                 std::thread client_connection(&ServerImpl::ClientProcess, this, client_socket);
