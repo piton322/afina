@@ -91,13 +91,13 @@ void ServerImpl::Stop()
 {
     // Stopping server
     running.store(false);
-    shutdown(_server_socket, SHUT_RDWR);
     std::unique_lock<std::mutex> lock(socket_mutex);
     for (auto i: sockets)
     {
         shutdown(i, SHUT_RD);
     }
     // Shutdown clients sockets
+    shutdown(_server_socket, SHUT_RDWR);
 }
 
 // See Server.h
