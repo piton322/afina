@@ -34,6 +34,7 @@ public:
     // see SimpleLRU.h
     bool PutIfAbsent(const std::string & key, const std::string & value) override {
         // sinchronization
+        std::unique_lock<std::mutex> lock(mutex_lru);
         return SimpleLRU::PutIfAbsent(key, value);
     }
 
