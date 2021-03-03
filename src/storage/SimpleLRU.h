@@ -6,7 +6,6 @@
 #include <string>
 
 #include <afina/Storage.h>
-using namespace std;
 
 namespace Afina 
 {
@@ -27,34 +26,34 @@ public:
         _lru_index.clear();
         while (_lru_head != nullptr)
         {
-            _lru_head = move(_lru_head->next);
+            _lru_head = std::move(_lru_head->next);
         }
         _lru_last = nullptr;
     }
 
     // Implements Afina::Storage interface
-    bool Put(const string & key, const string & value) override;
+    bool Put(const std::string & key, const std::string & value) override;
 
     // Implements Afina::Storage interface
-    bool PutIfAbsent(const string & key, const string & value) override;
+    bool PutIfAbsent(const std::string & key, const std::string & value) override;
 
     // Implements Afina::Storage interface
-    bool Set(const string & key, const string & value) override;
+    bool Set(const std::string & key, const std::string & value) override;
 
     // Implements Afina::Storage interface
-    bool Delete(const string & key) override;
+    bool Delete(const std::string & key) override;
 
     // Implements Afina::Storage interface
-    bool Get(const string & key, string & value) override;
+    bool Get(const std::string & key, std::string & value) override;
 
 private:
     // LRU cache node
     using lru_node = struct lru_node 
     {
-        const string key; // не меняем иначе проблемы
-        string value;
+        const std::string key; // не меняем иначе проблемы
+        std::string value;
         lru_node * prev;
-        unique_ptr<lru_node> next; // только один unique должен быть
+        std::unique_ptr<lru_node> next; // только один unique должен быть
     };
 
     // Maximum number of bytes could be stored in this cache.
@@ -66,11 +65,11 @@ private:
     // element that wasn't used for longest time.
     //
     // List owns all nodes
-    unique_ptr<lru_node> _lru_head;
-    lru_node * _lru_last; // потребуется указатель на хвост для быстрого доступа
+    std::unique_ptr<lru_node> _lru_head;
+    lru_node * _lru_last = nullptr; // потребуется указатель на хвост для быстрого доступа
 
     // Index of nodes from list above, allows fast random access to elements by lru_node#key
-    map<reference_wrapper<const string>, reference_wrapper<lru_node>, less<string>> _lru_index;
+    std::map<std::reference_wrapper<const std::string>, std::reference_wrapper<lru_node>, std::less<std::string>> _lru_index;
     // reference_wrapper - обертка над ссылкой на объект или на функцию
     // map — отсортированный ассоциативный контейнер, который содержит пары ключ-значение с неповторяющимися ключами. 
     
@@ -78,9 +77,9 @@ private:
 
     void DeleteLast();
 
-    bool UpdateValue(lru_node & node, const string & value);
+    bool UpdateValue(lru_node & node, const std::string & value);
 
-    bool PutNewPair(const string & key, const string & value);
+    bool PutNewPair(const std::string & key, const std::string & value);
 };
 
 } // namespace Backend
