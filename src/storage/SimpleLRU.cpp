@@ -1,5 +1,5 @@
 #include "SimpleLRU.h"
-#include "iostream"
+#include <iostream>
 using namespace std;
 
 namespace Afina 
@@ -101,11 +101,11 @@ bool SimpleLRU::Put(const string & key, const string & value)
     auto result = _lru_index.find(key);
     if (result != _lru_index.end())
     {
-        return SimpleLRU::UpdateValue((result->second).get(), value);
+        return UpdateValue((result->second).get(), value);
     }
     else
     {	
-        return SimpleLRU::PutNewPair(key, value);
+        return PutNewPair(key, value);
     }
 }
 
@@ -120,7 +120,7 @@ bool SimpleLRU::PutIfAbsent(const string & key, const string & value)
     auto result = _lru_index.find(key);
     if (result == _lru_index.end())
     {
-        return SimpleLRU::PutNewPair(key, value);
+        return PutNewPair(key, value);
     }
     return false; 
 }
@@ -137,7 +137,7 @@ bool SimpleLRU::Set(const string & key, const string & value)
     auto result = _lru_index.find(key);
     if (result != _lru_index.end())
     {
-        return SimpleLRU::UpdateValue((result->second).get(), value);
+        return UpdateValue((result->second).get(), value);
     }
     return false; 
 }
