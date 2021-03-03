@@ -60,9 +60,6 @@ private:
     // limit of workers
     int limit_workers;
 
-    // current number of workers
-    std::atomic<int> workers_count;
-
     // to open and close socket
     std::mutex socket_mutex;
 
