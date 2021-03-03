@@ -5,7 +5,7 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-
+#include <vector>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -34,7 +34,14 @@ namespace MTblocking
 ServerImpl::ServerImpl(std::shared_ptr<Afina::Storage> ps, std::shared_ptr<Logging::Service> pl) : Server(ps, pl) {}
 
 // See Server.h
-ServerImpl::~ServerImpl() {}
+ServerImpl::~ServerImpl() 
+{
+    Stop();
+    if (_thread.joinable()) 
+    {
+        _thread.join();        
+    }
+}
 
 // See Server.h
 void ServerImpl::Start(uint16_t port, uint32_t n_accept, uint32_t n_workers) 
@@ -107,8 +114,12 @@ void ServerImpl::Join()
     _thread.join();
     // waiting for workers_count = 0
     std::unique_lock<std::mutex> lock(socket_mutex);
-    while (workers_count != 0)
+    while (!sockets.empty())
     {
+        if (sockets.empty()) 
+        {
+            break;
+        }
         s_stop.wait(lock);
     }
 }
@@ -226,8 +237,7 @@ void ServerImpl::ClientProcess(int client_socket)
         std::unique_lock<std::mutex> lock(socket_mutex);
         close(client_socket);
         sockets.erase(client_socket);
-        workers_count--;
-        if (!running) 
+        if (!running && sockets.size() == 0) 
         {
             s_stop.notify_all();
         }
@@ -275,10 +285,9 @@ void ServerImpl::OnRun()
         // Start new thread and process data from/to connection
         {
             std::unique_lock<std::mutex> lock(socket_mutex);
-            if ((workers_count < limit_workers) && running)
+            if ((sockets.size() < limit_workers) && running)
             {
                 sockets.insert(client_socket);
-                workers_count++;
                 //_logger->debug("Starting client tread {} ", client_socket);
                 std::thread client_connection(&ServerImpl::ClientProcess, this, client_socket);
                 client_connection.detach(); // Separates the thread of execution from the thread object, allowing execution to continue independently
