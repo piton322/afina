@@ -39,7 +39,7 @@ ServerImpl::~ServerImpl()
     Stop();
     if (_thread.joinable()) 
     {
-        _thread.join();        
+        Join();        
     }
 }
 
