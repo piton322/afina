@@ -148,7 +148,7 @@ void Connection::DoRead()
 void Connection::DoWrite() 
 {
     std::atomic_thread_fence(std::memory_order_acquire);
-    struct iovec iovs[_output_queue.size()];
+    struct iovec iovs[_output_queue.size()] = {};
     size_t i = 0;
     for (i = 0; i < _output_queue.size(); ++i)
     {
