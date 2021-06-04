@@ -5,29 +5,37 @@
 #include <memory>
 #include <thread>
 
-namespace spdlog {
+#include "ServerImpl.h"
+
+namespace spdlog 
+{
 class logger;
 }
 
-namespace Afina {
+namespace Afina 
+{
 
 // Forward declaration, see afina/Storage.h
 class Storage;
-namespace Logging {
+namespace Logging 
+{
 class Service;
 }
 
-namespace Network {
-namespace MTnonblock {
+namespace Network 
+{
+namespace MTnonblock 
+{
 
 /**
  * # Thread running epoll
  * On Start spaws background thread that is doing epoll on the given server
  * socket and process incoming connections and its data
  */
-class Worker {
+class Worker 
+{
 public:
-    Worker(std::shared_ptr<Afina::Storage> ps, std::shared_ptr<Afina::Logging::Service> pl);
+    Worker(std::shared_ptr<Afina::Storage> ps, std::shared_ptr<Afina::Logging::Service> pl, ServerImpl * pserver);
     ~Worker();
 
     Worker(Worker &&);
@@ -63,6 +71,8 @@ protected:
 private:
     Worker(Worker &) = delete;
     Worker &operator=(Worker &) = delete;
+    
+    ServerImpl * _pServer;
 
     // afina services
     std::shared_ptr<Afina::Storage> _pStorage;

@@ -3,16 +3,23 @@
 
 #include <thread>
 #include <vector>
+#include <mutex>
+#include <set>
 
+#include "Connection.h"
 #include <afina/network/Server.h>
 
-namespace spdlog {
+namespace spdlog 
+{
 class logger;
 }
 
-namespace Afina {
-namespace Network {
-namespace MTnonblock {
+namespace Afina 
+{
+namespace Network 
+{
+namespace MTnonblock 
+{
 
 // Forward declaration, see Worker.h
 class Worker;
@@ -21,7 +28,8 @@ class Worker;
  * # Network resource manager implementation
  * Epoll based server
  */
-class ServerImpl : public Server {
+class ServerImpl : public Server 
+{
 public:
     ServerImpl(std::shared_ptr<Afina::Storage> ps, std::shared_ptr<Logging::Service> pl);
     ~ServerImpl();
@@ -34,6 +42,12 @@ public:
 
     // See Server.h
     void Join() override;
+
+    void Erase(Connection* pc);
+
+    void WorkersDec();
+
+    void CloseConnectionsIfNWorkes0();
 
 protected:
     void OnRun();
@@ -53,7 +67,7 @@ private:
 
     // Threads that accepts new connections, each has private epoll instance
     // but share global server socket
-    std::vector<std::thread> _acceptors;
+    std::vector<std::thread> _acceptors; // потоки, которые будут делать accept
 
     // EPOLL instance shared between workers
     int _data_epoll_fd;
@@ -62,7 +76,15 @@ private:
     int _event_fd;
 
     // threads serving read/write requests
-    std::vector<Worker> _workers;
+    std::vector<Worker> _workers; // потоки, которые будут делать read и write
+
+    // число работающих воркеров
+    int _n_workers;
+
+    // открытые connections
+    std::set<Connection *> _connections;
+
+    std::mutex _mut; // для защиты set
 };
 
 } // namespace MTnonblock
