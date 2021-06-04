@@ -1,18 +1,24 @@
 #ifndef AFINA_NETWORK_ST_NONBLOCKING_SERVER_H
 #define AFINA_NETWORK_ST_NONBLOCKING_SERVER_H
 
+#include <set>
 #include <thread>
 #include <vector>
 
 #include <afina/network/Server.h>
+#include "Connection.h"
 
-namespace spdlog {
+namespace spdlog 
+{
 class logger;
 }
 
-namespace Afina {
-namespace Network {
-namespace STnonblock {
+namespace Afina 
+{
+namespace Network 
+{
+namespace STnonblock 
+{
 
 // Forward declaration, see Worker.h
 class Worker;
@@ -21,7 +27,8 @@ class Worker;
  * # Network resource manager implementation
  * Epoll based server
  */
-class ServerImpl : public Server {
+class ServerImpl : public Server 
+{
 public:
     ServerImpl(std::shared_ptr<Afina::Storage> ps, std::shared_ptr<Logging::Service> pl);
     ~ServerImpl();
@@ -56,6 +63,9 @@ private:
 
     // IO thread
     std::thread _work_thread;
+
+    // открытые connections
+    std::set<Connection *> _connections;
 };
 
 } // namespace STnonblock
