@@ -133,13 +133,14 @@ void Connection::DoRead()
     {
         //_logger->error("Failed to process connection on descriptor {}: {}", _socket, ex.what());
         std::cerr << ("Failed to process connection on descriptor {}: {}", _socket, ex.what()) << std::endl;
+        this->OnError();
     }
 }
 
 // See Connection.h
 void Connection::DoWrite() 
 { 
-    struct iovec iovs[_output_queue.size()];
+    struct iovec iovs[_output_queue.size()] = {};;
     size_t i = 0;
     for (i = 0; i < _output_queue.size(); ++i)
     {
