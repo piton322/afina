@@ -31,6 +31,8 @@ class Worker;
 class ServerImpl : public Server 
 {
 public:
+    std::mutex _mut; // для защиты set
+    
     ServerImpl(std::shared_ptr<Afina::Storage> ps, std::shared_ptr<Logging::Service> pl);
     ~ServerImpl();
 
@@ -83,8 +85,6 @@ private:
 
     // открытые connections
     std::set<Connection *> _connections;
-
-    std::mutex _mut; // для защиты set
 };
 
 } // namespace MTnonblock
