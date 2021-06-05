@@ -133,6 +133,7 @@ void Worker::OnRun()
                 {
                     _logger->debug("epoll_ctl failed during connection rearm: error {}", epoll_ctl_retval);
                     pconn->OnError();
+                    std::lock_guard<std::mutex> l(_pServer->_mut);
                     close(pconn->_socket);
                     _pServer->Erase(pconn);
                     delete pconn;
@@ -145,6 +146,7 @@ void Worker::OnRun()
                 {
                     std::cerr << "Failed to delete connection!" << std::endl;
                 }
+                std::lock_guard<std::mutex> l(_pServer->_mut);
                 close(pconn->_socket);
                 _pServer->Erase(pconn);
                 delete pconn;
